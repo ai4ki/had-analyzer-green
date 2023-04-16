@@ -75,37 +75,37 @@ def get_had_table():
     had_table = pd.DataFrame()
     error_string = ""
 
-    try:
-        service = Service(GeckoDriverManager().install())
-        options = Options()
-        options.add_argument("--headless")
-        driver = webdriver.Firefox('/home/appuser/.wdm/drivers/geckodriver/linux64/v0.33.0', options=options)
-        driver.get(HAD_URL)
+    
+    service = Service(GeckoDriverManager().install())
+    options = Options()
+    options.add_argument("--headless")
+    driver = webdriver.Firefox('/home/appuser/.wdm/drivers/geckodriver/linux64/v0.33.0', options=options)
+    driver.get(HAD_URL)
 
-        select_element = Select(driver.find_element(By.NAME, "L_CAT"))
-        select_element.select_by_value("SQLB")
+    select_element = Select(driver.find_element(By.NAME, "L_CAT"))
+    select_element.select_by_value("SQLB")
 
-        radio_button = driver.find_element(By.XPATH, '//input[@type="radio" and @value="500"]')
-        radio_button.click()
+    radio_button = driver.find_element(By.XPATH, '//input[@type="radio" and @value="500"]')
+    radio_button.click()
 
-        submit = driver.find_element(By.CLASS_NAME, "submit")
-        submit.click()
+    submit = driver.find_element(By.CLASS_NAME, "submit")
+    submit.click()
 
-        wait = WebDriverWait(driver, 10)
-        content = wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
+    wait = WebDriverWait(driver, 10)
+    content = wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
 
-        table_html = content.get_attribute('outerHTML')
-        pattern = r'<div class="small">.*?</div>'  # because is scrambles table
-        table_clean = re.sub(pattern, '', table_html)
+    table_html = content.get_attribute('outerHTML')
+    pattern = r'<div class="small">.*?</div>'  # because is scrambles table
+    table_clean = re.sub(pattern, '', table_html)
 
-        had_table = pd.read_html(table_clean, encoding='utf-8', header=0)[0]
-        had_table.dropna(axis=0, how='all', inplace=True)
-        had_table.drop(had_table.columns[[0]], axis=1, inplace=True)
-        had_table.reset_index(drop=True, inplace=True)
-        had_table.rename(columns={'VerfahrenLeistung': 'Ausschreibung'}, inplace=True)
+    had_table = pd.read_html(table_clean, encoding='utf-8', header=0)[0]
+    had_table.dropna(axis=0, how='all', inplace=True)
+    had_table.drop(had_table.columns[[0]], axis=1, inplace=True)
+    had_table.reset_index(drop=True, inplace=True)
+    had_table.rename(columns={'VerfahrenLeistung': 'Ausschreibung'}, inplace=True)
 
-    except:
-        error_string = "ERROR: Access to HAD database failed :("
+    
+    #    error_string = "ERROR: Access to HAD database failed :("
 
     return had_table, error_string
 
