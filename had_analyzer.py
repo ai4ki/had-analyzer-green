@@ -31,7 +31,7 @@ openai.api_key = OPENAI_API_KEY
 # Path to webdriver
 cwd_path = os.path.abspath(os.getcwd())
 driver_path = join(cwd_path, 'assets/firefox')
-print("ATTENTION: ", driver_path)
+st.markdown(driver_path)
 
 # URL of HAD page
 HAD_URL = 'https://www.had.de/onlinesuche_einfach.html'
@@ -178,7 +178,7 @@ with cols[0]:
     st.markdown(f"{prompt}")
 
     if st.session_state.error:
-        st.markdown(f"## Ups, das ist leider was schief gegangen :((( | System message: {st.session_state.error}")
+        st.markdown(f"### Ups, das ist leider was schief gegangen :((( | System message: {st.session_state.error}")
     else:
         n_calls = len(st.session_state.table)
         st.markdown(f"**{n_calls} Ausschreibungen in HAD gefunden**")
