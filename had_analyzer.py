@@ -17,6 +17,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
+from selenium.common.exceptions import TimeoutException
 from webdriver_manager.firefox import GeckoDriverManager
 from typing import List
 
@@ -29,10 +30,6 @@ SMTP_SERVER = os.environ["SMTP_SERVER"]
 
 # Set openai api key
 openai.api_key = OPENAI_API_KEY
-
-# Path to webdriver
-cwd_path = os.path.abspath(os.getcwd())
-driver_path = join(cwd_path, 'assets/firefox')
 
 # URL of HAD page
 HAD_URL = 'https://www.had.de/onlinesuche_einfach.html'
@@ -73,8 +70,6 @@ with open("./assets/positive_prompt_de.txt", "r", encoding="utf-8") as f:
 def get_had_table():
 
     had_table = pd.DataFrame()
-    error_string = ""
-
     
     service = Service(GeckoDriverManager().install())
     options = Options()
@@ -92,22 +87,27 @@ def get_had_table():
     submit.click()
 
     wait = WebDriverWait(driver, 10)
-    content = wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
-
-    table_html = content.get_attribute('outerHTML')
-    pattern = r'<div class="small">.*?</div>'  # because is scrambles table
-    table_clean = re.sub(pattern, '', table_html)
-
-    had_table = pd.read_html(table_clean, encoding='utf-8', header=0)[0]
-    had_table.dropna(axis=0, how='all', inplace=True)
-    had_table.drop(had_table.columns[[0]], axis=1, inplace=True)
-    had_table.reset_index(drop=True, inplace=True)
-    had_table.rename(columns={'VerfahrenLeistung': 'Ausschreibung'}, inplace=True)
-
     
-    #    error_string = "ERROR: Access to HAD database failed :("
+    try:
+        content = wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
+      
+        table_html = content.get_attribute('outerHTML')
+        pattern = r'<div class="small">.*?</div>'  # because is scrambles table
+        table_clean = re.sub(pattern, '', table_html)
 
-    return had_table, error_string
+        had_table = pd.read_html(table_clean, encoding='utf-8', header=0)[0]
+        had_table.dropna(axis=0, how='all', inplace=True)
+        had_table.drop(had_table.columns[[0]], axis=1, inplace=True)
+        had_table.reset_index(drop=True, inplace=True)
+        had_table.rename(columns={'VerfahrenLeistung': 'Ausschreibung'}, inplace=True)
+    
+    except TimeoutException:
+        st.warning("Time out: Content konnte nicht geladen werden")
+        driver.quit()
+
+    driver.quit()
+
+    return had_table
 
 
 def send_email(subject, address, body):
@@ -172,14 +172,12 @@ def keyword_check(word):
 with cols[0]:
 
     if "table" not in st.session_state:
-        table_as_df, had_error = get_had_table()
-        st.session_state.table = table_as_df
-        st.session_state.error = had_error
+        st.session_state.table = get_had_table()
 
     st.markdown("#### Institutsprofil")
     st.markdown(f"{prompt}")
 
-    if st.session_state.error:
+    if st.session_state.table.empty:
         st.markdown(f"### Ups, das ist leider was schief gegangen :((( | System message: {st.session_state.error}")
     else:
         n_calls = len(st.session_state.table)
