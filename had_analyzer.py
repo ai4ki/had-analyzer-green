@@ -15,7 +15,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.options import Options, Service
+from webdriver_manager.firefox import GeckoDriverManager
 from typing import List
 
 
@@ -74,9 +75,10 @@ def get_had_table():
     error_string = ""
 
     try:
+        service = Service(GeckoDriverManager().install())
         options = Options()
         options.add_argument("--headless")
-        driver = webdriver.Firefox(driver_path, options=options)
+        driver = webdriver.Firefox(options=options, service=service)
         driver.get(HAD_URL)
 
         select_element = Select(driver.find_element(By.NAME, "L_CAT"))
