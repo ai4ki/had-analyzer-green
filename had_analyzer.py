@@ -29,7 +29,7 @@ SMTP_SERVER = os.environ["SMTP_SERVER"]
 openai.api_key = OPENAI_API_KEY
 
 # Path to webdriver
-cwd_path = os.getcwd()
+cwd_path = os.path.abspath(os.getcwd())
 driver_path = join(cwd_path, 'assets/firefox')
 print("ATTENTION: ", driver_path)
 
@@ -77,7 +77,7 @@ def get_had_table():
     try:
         options = Options()
         options.add_argument("--headless")
-        driver = webdriver.Firefox(options=options)
+        driver = webdriver.Firefox(driver_path, options=options)
         driver.get(HAD_URL)
 
         select_element = Select(driver.find_element(By.NAME, "L_CAT"))
