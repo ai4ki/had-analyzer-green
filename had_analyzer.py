@@ -76,10 +76,10 @@ def get_had_table():
     error_string = ""
 
     
-    service = Service(GeckoDriverManager().install())
+    #service = Service(GeckoDriverManager().install())
     options = Options()
     options.add_argument("--headless")
-    driver = webdriver.Firefox(options=options, service=service,)
+    driver = webdriver.Firefox(driver_path, options=options)
     driver.get(HAD_URL)
 
     select_element = Select(driver.find_element(By.NAME, "L_CAT"))
