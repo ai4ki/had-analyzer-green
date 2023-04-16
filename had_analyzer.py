@@ -31,7 +31,6 @@ openai.api_key = OPENAI_API_KEY
 # Path to webdriver
 cwd_path = os.path.abspath(os.getcwd())
 driver_path = join(cwd_path, 'assets/firefox')
-st.markdown(driver_path)
 
 # URL of HAD page
 HAD_URL = 'https://www.had.de/onlinesuche_einfach.html'
