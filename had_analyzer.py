@@ -35,7 +35,7 @@ openai.api_key = OPENAI_API_KEY
 HAD_URL = 'https://www.had.de/onlinesuche_einfach.html'
 
 # Global Streamlit settings
-st.set_page_config(layout="wide", page_title="HAD Screening")
+st.set_page_config(layout="wide", page_title="HAD Screening", page_icon="./images/icon.png")
 
 with open("./css/style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
