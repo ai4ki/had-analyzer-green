@@ -77,7 +77,7 @@ def get_had_table():
     try:
         options = Options()
         options.add_argument("--headless")
-        driver = webdriver.Firefox(driver_path, options=options)
+        driver = webdriver.Firefox(options=options)
         driver.get(HAD_URL)
 
         select_element = Select(driver.find_element(By.NAME, "L_CAT"))
