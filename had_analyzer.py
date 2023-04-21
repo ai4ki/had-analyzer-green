@@ -31,6 +31,9 @@ SMTP_SERVER = os.environ["SMTP_SERVER"]
 # Set openai api key
 openai.api_key = OPENAI_API_KEY
 
+# GeckoDriver location
+driver_path = join(os.getcwd(), "assets/firefox")
+
 # URL of HAD page
 HAD_URL = 'https://www.had.de/onlinesuche_einfach.html'
 
@@ -74,7 +77,8 @@ def get_had_table():
     service = Service(GeckoDriverManager().install())
     options = Options()
     options.add_argument("--headless")
-    driver = webdriver.Firefox(options=options, service=service)
+    #driver = webdriver.Firefox(options=options, service=service)
+    driver = webdriver.Firefox(driver_path, options=options)
     driver.get(HAD_URL)
 
     select_element = Select(driver.find_element(By.NAME, "L_CAT"))
