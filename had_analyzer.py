@@ -74,7 +74,7 @@ def get_had_table():
 
     had_table = pd.DataFrame()
     
-    service = Service(GeckoDriverManager().install())
+    #service = Service(GeckoDriverManager().install())
     options = Options()
     options.add_argument("--headless")
     #driver = webdriver.Firefox(options=options, service=service)
