@@ -1,1 +1,1 @@
-facebook-esr
+facebook-esr=102.10.0
