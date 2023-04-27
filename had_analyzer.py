@@ -43,7 +43,7 @@ st.set_page_config(layout="wide", page_title="HAD Screening", page_icon="./image
 with open("./css/style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Some self-marekting, because -- why not?
+# Place logo
 st.markdown(
     """
         <style>
